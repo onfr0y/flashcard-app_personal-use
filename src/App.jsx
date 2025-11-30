@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import DeckList from './components/DeckList';
 import StudySession from './components/StudySession';
 import Heatmap from './components/Heatmap';
+import Stats from './components/Stats';
 import Login from './components/Login';
 import { useStore } from './hooks/useStore';
 
@@ -40,16 +41,7 @@ function App() {
             case 'decks':
                 return <DeckList onStudy={handleStudy} />;
             case 'stats':
-                return (
-                    <div className="w-full max-w-4xl mx-auto space-y-6">
-                        <h2 className="text-3xl font-bold mb-6">Your Progress</h2>
-                        <Heatmap />
-                        <div className="glass-panel p-6">
-                            <h3 className="text-xl font-bold mb-4">Statistics</h3>
-                            <p className="text-white/60">More detailed statistics coming soon...</p>
-                        </div>
-                    </div>
-                );
+                return <Stats />;
             case 'settings':
                 return (
                     <div className="glass-panel p-8 max-w-2xl mx-auto text-center">

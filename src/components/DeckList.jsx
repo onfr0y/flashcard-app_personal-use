@@ -4,7 +4,7 @@ import { Plus, Trash2, Play, Settings, X, Image as ImageIcon } from 'lucide-reac
 import ScrollReveal from './ScrollReveal';
 import { motion, AnimatePresence } from 'framer-motion';
 import ScrambledText from './ScrambledText';
-import Heatmap from './Heatmap';
+import ScrambledText from './ScrambledText';
 
 import { useToast } from '../context/ToastContext';
 
@@ -143,10 +143,7 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
                 </ScrambledText>
             </div>
 
-            <div className="mb-12 glass-panel p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-700">Study Activity</h3>
-                <Heatmap data={useStore(state => state.studyLog)} />
-            </div>
+
 
             <div className="dashboard-grid">
                 {/* Create New Deck Card */}
