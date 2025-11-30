@@ -10,15 +10,15 @@ const Login = () => {
 
     const { login, signup } = useStore();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
         try {
             if (isLogin) {
-                login(username, password);
+                await login(username, password);
             } else {
-                signup(username, password);
+                await signup(username, password);
             }
         } catch (err) {
             setError(err.message);
@@ -26,8 +26,8 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center p-4">
-            <div className="glass-panel p-8 w-full max-w-md relative overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+            <div className="glass-panel p-8 w-full max-w-md relative overflow-hidden animate-in fade-in zoom-in duration-300">
                 {/* Decorative background elements */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 

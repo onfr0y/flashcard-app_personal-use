@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './components/Layout';
 import DeckList from './components/DeckList';
 import StudySession from './components/StudySession';
@@ -7,9 +7,15 @@ import Login from './components/Login';
 import { useStore } from './hooks/useStore';
 
 function App() {
-    const user = useStore((state) => state.user);
+    const { user, fetchDecks } = useStore();
     const [activeTab, setActiveTab] = useState('home');
     const [studyDeckId, setStudyDeckId] = useState(null);
+
+    useEffect(() => {
+        if (user) {
+            fetchDecks();
+        }
+    }, [user, fetchDecks]);
 
     if (!user) {
         return <Login />;
@@ -56,9 +62,14 @@ function App() {
     };
 
     return (
-        <Layout activeTab={activeTab} onTabChange={setActiveTab}>
-            {renderContent()}
-        </Layout>
+        <div className="min-h-screen text-white selection:bg-white/20">
+            {!user && <Login />}
+            <div className={!user ? 'pointer-events-none' : ''}>
+                <Layout activeTab={activeTab} onTabChange={setActiveTab}>
+                    {renderContent()}
+                </Layout>
+            </div>
+        </div>
     );
 }
 
