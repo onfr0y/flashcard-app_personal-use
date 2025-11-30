@@ -212,7 +212,7 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
                                         </div>
                                     </motion.form>
                                 ) : (
-                                    <div className="flex gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                    <div className="flex gap-3 mt-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 transform translate-y-0 md:translate-y-2 md:group-hover:translate-y-0">
                                         <button
                                             onClick={() => onStudy(deck.id)}
                                             disabled={deck.cards.length === 0}
