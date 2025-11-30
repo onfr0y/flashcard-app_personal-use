@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../hooks/useStore';
-import { Plus, Trash2, Play, Settings, X } from 'lucide-react';
+import { Plus, Trash2, Play, Settings, X, Image as ImageIcon } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 import { motion, AnimatePresence } from 'framer-motion';
 import ScrambledText from './ScrambledText';
@@ -79,6 +79,18 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
                 e.preventDefault(); // Prevent pasting the file name
                 break;
             }
+        }
+    };
+
+    const handleImageUpload = (e, type) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (type === 'front') setFrontImage(event.target.result);
+                else setBackImage(event.target.result);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -230,23 +242,76 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
                                             onChange={e => setBack(e.target.value)}
                                         />
                                         <div className="grid grid-cols-2 gap-2">
-                                            <div
-                                                className="glass-input h-20 flex items-center justify-center text-xs text-gray-400 cursor-pointer hover:bg-white bg-white relative overflow-hidden"
-                                                onPaste={(e) => handlePaste(e, 'front')}
-                                                tabIndex={0}
-                                            >
-                                                {frontImage ? (
-                                                    <img src={frontImage} alt="Front Preview" className="absolute inset-0 w-full h-full object-cover opacity-50" />
-                                                ) : "Paste Front (Ctrl+V)"}
+                                            {/* Front Image Input */}
+                                            <div className="relative group">
+                                                <div
+                                                    className="glass-input h-24 flex flex-col items-center justify-center text-xs text-gray-400 cursor-pointer hover:bg-white bg-white relative overflow-hidden border-dashed border-2 border-gray-200 hover:border-blue-300 transition-colors"
+                                                    onPaste={(e) => handlePaste(e, 'front')}
+                                                    onClick={() => document.getElementById('front-image-upload').click()}
+                                                    tabIndex={0}
+                                                >
+                                                    {frontImage ? (
+                                                        <>
+                                                            <img src={frontImage} alt="Front Preview" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => { e.stopPropagation(); setFrontImage(''); }}
+                                                                className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-500 transition-colors"
+                                                            >
+                                                                <X className="w-3 h-3" />
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <ImageIcon className="w-6 h-6 mb-1 opacity-50" />
+                                                            <span>Paste or Click to Upload</span>
+                                                            <span className="text-[10px] opacity-60">(Front)</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    id="front-image-upload"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={(e) => handleImageUpload(e, 'front')}
+                                                />
                                             </div>
-                                            <div
-                                                className="glass-input h-20 flex items-center justify-center text-xs text-gray-400 cursor-pointer hover:bg-white bg-white relative overflow-hidden"
-                                                onPaste={(e) => handlePaste(e, 'back')}
-                                                tabIndex={0}
-                                            >
-                                                {backImage ? (
-                                                    <img src={backImage} alt="Back Preview" className="absolute inset-0 w-full h-full object-cover opacity-50" />
-                                                ) : "Paste Back (Ctrl+V)"}
+
+                                            {/* Back Image Input */}
+                                            <div className="relative group">
+                                                <div
+                                                    className="glass-input h-24 flex flex-col items-center justify-center text-xs text-gray-400 cursor-pointer hover:bg-white bg-white relative overflow-hidden border-dashed border-2 border-gray-200 hover:border-blue-300 transition-colors"
+                                                    onPaste={(e) => handlePaste(e, 'back')}
+                                                    onClick={() => document.getElementById('back-image-upload').click()}
+                                                    tabIndex={0}
+                                                >
+                                                    {backImage ? (
+                                                        <>
+                                                            <img src={backImage} alt="Back Preview" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => { e.stopPropagation(); setBackImage(''); }}
+                                                                className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-500 transition-colors"
+                                                            >
+                                                                <X className="w-3 h-3" />
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <ImageIcon className="w-6 h-6 mb-1 opacity-50" />
+                                                            <span>Paste or Click to Upload</span>
+                                                            <span className="text-[10px] opacity-60">(Back)</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    id="back-image-upload"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={(e) => handleImageUpload(e, 'back')}
+                                                />
                                             </div>
                                         </div>
                                         <div className="flex gap-2">

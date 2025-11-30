@@ -109,7 +109,7 @@ const StudySession = ({ deckId, onBack }) => {
                                 {/* Front */}
                                 <div className="absolute w-full h-full backface-hidden glass-panel flex flex-col items-center justify-center p-8 text-center bg-white border-2 border-white shadow-xl">
                                     {currentCard.frontImage && (
-                                        <img src={currentCard.frontImage} alt="Front" className="max-h-40 mb-4 rounded-lg object-contain" />
+                                        <img src={currentCard.frontImage} alt="Front" className="max-h-[50vh] w-auto mb-4 rounded-lg object-contain shadow-sm" />
                                     )}
                                     <h3 className="text-3xl font-medium text-gray-900">{currentCard.front}</h3>
                                     <p className="absolute bottom-4 text-sm text-gray-400">Tap to flip</p>
@@ -118,7 +118,7 @@ const StudySession = ({ deckId, onBack }) => {
                                 {/* Back */}
                                 <div className="absolute w-full h-full backface-hidden glass-panel flex flex-col items-center justify-center p-8 text-center rotate-y-180 bg-gray-50 border-2 border-white shadow-xl">
                                     {currentCard.backImage && (
-                                        <img src={currentCard.backImage} alt="Back" className="max-h-40 mb-4 rounded-lg object-contain" />
+                                        <img src={currentCard.backImage} alt="Back" className="max-h-[50vh] w-auto mb-4 rounded-lg object-contain shadow-sm" />
                                     )}
                                     <h3 className="text-3xl font-medium text-gray-900">{currentCard.back}</h3>
                                 </div>
