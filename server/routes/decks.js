@@ -12,7 +12,7 @@ router.get('/', auth, async (req, res) => {
         res.json(decks);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -31,7 +31,7 @@ router.post('/', auth, async (req, res) => {
         res.json(deck);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -50,7 +50,7 @@ router.delete('/:id', auth, async (req, res) => {
         res.json({ msg: 'Deck removed' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -85,7 +85,7 @@ router.post('/:id/cards', auth, async (req, res) => {
         res.json(deck);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -104,7 +104,7 @@ router.put('/:id/settings', auth, async (req, res) => {
         res.json(deck);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 

@@ -23,7 +23,7 @@ const Layout = ({ children, activeTab, onTabChange }) => {
                 </motion.div>
             </div>
 
-            <main className="flex-1 w-full h-screen p-6 md:p-12 flex flex-col items-center justify-center relative z-10">
+            <main className="flex-1 w-full h-screen p-4 md:p-12 flex flex-col items-center justify-center relative z-10">
                 <div className="w-full max-w-7xl h-full flex flex-col">
                     <AnimatePresence mode="wait">
                         <motion.div

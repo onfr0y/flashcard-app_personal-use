@@ -13,8 +13,8 @@ const Dock = ({ activeTab, onTabChange }) => {
     ];
 
     return (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-            <div className="bg-white/80 backdrop-blur-xl px-6 py-3 rounded-full flex items-center gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50">
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
+            <div className="bg-white/80 backdrop-blur-xl px-4 py-3 rounded-full flex items-center justify-between shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50 w-full">
                 {items.map((item) => (
                     <button
                         key={item.id}

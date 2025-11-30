@@ -131,7 +131,7 @@ const StudySession = ({ deckId, onBack }) => {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: 20 }}
-                                    className="grid grid-cols-4 gap-4"
+                                    className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
                                 >
                                     <button onClick={() => handleRate(1)} className="glass-button bg-red-50 text-red-600 hover:bg-red-100 border-red-200 flex-col gap-0 py-2">
                                         <div className="text-sm font-bold">Again</div>
