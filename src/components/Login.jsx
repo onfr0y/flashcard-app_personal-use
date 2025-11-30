@@ -8,6 +8,7 @@ const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const { login, signup } = useStore();
@@ -26,6 +27,7 @@ const Login = () => {
                 addToast('Account created successfully!', 'success');
             }
         } catch (err) {
+            setError(err.message);
             addToast(err.message, 'error');
         } finally {
             setLoading(false);
