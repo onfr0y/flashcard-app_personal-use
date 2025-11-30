@@ -137,7 +137,7 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
                     duration={1.2}
                     speed={0.5}
                     scrambleChars="!<>-_\\/[]{}—=+*^?#________"
-                    className="text-white text-6xl font-extrabold text-center"
+                    className="text-white text-4xl md:text-6xl font-extrabold text-center"
                 >
                     My Decks
                 </ScrambledText>

@@ -98,7 +98,7 @@ const StudySession = ({ deckId, onBack }) => {
                         </div>
 
                         <div
-                            className="perspective-1000 w-full h-[400px] cursor-pointer group"
+                            className="perspective-1000 w-full h-[300px] md:h-[400px] cursor-pointer group"
                             onClick={() => !isFlipped && setIsFlipped(true)}
                         >
                             <motion.div
