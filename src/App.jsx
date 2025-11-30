@@ -3,10 +3,17 @@ import Layout from './components/Layout';
 import DeckList from './components/DeckList';
 import StudySession from './components/StudySession';
 import Heatmap from './components/Heatmap';
+import Login from './components/Login';
+import { useStore } from './hooks/useStore';
 
 function App() {
+    const user = useStore((state) => state.user);
     const [activeTab, setActiveTab] = useState('home');
     const [studyDeckId, setStudyDeckId] = useState(null);
+
+    if (!user) {
+        return <Login />;
+    }
 
     const handleStudy = (deckId) => {
         setStudyDeckId(deckId);

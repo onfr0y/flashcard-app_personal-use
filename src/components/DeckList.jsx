@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ScrambledText from './ScrambledText';
 
 const DeckList = ({ onStudy, searchQuery = '' }) => {
-    const { decks, addDeck, deleteDeck, addCard, updateDeckSettings } = useStore();
+    const { decks, addDeck, deleteDeck, addCard, updateDeckSettings, user } = useStore();
     const [isCreating, setIsCreating] = useState(false);
     const [newDeckName, setNewDeckName] = useState('');
 
@@ -16,6 +16,7 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
 
     // Filter decks
     const filteredDecks = decks.filter(deck =>
+        (deck.ownerId === user?.id || !deck.ownerId) &&
         deck.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 

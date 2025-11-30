@@ -1,7 +1,10 @@
 import React from 'react';
-import { Home, Layers, BarChart2, Settings } from 'lucide-react';
+import { Home, Layers, BarChart2, Settings, LogOut } from 'lucide-react';
+import { useStore } from '../hooks/useStore';
 
 const Dock = ({ activeTab, onTabChange }) => {
+    const logout = useStore((state) => state.logout);
+
     const items = [
         { id: 'home', icon: Home, label: 'Home' },
         { id: 'decks', icon: Layers, label: 'Decks' },
@@ -24,6 +27,18 @@ const Dock = ({ activeTab, onTabChange }) => {
                         </span>
                     </button>
                 ))}
+
+                <div className="w-px h-8 bg-gray-300 mx-2" />
+
+                <button
+                    onClick={logout}
+                    className="p-3 rounded-full transition-all duration-300 group relative flex flex-col items-center hover:bg-red-50 text-gray-500 hover:text-red-600"
+                >
+                    <LogOut className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                    <span className="absolute -top-10 bg-red-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
+                        Logout
+                    </span>
+                </button>
             </div>
         </div>
     );

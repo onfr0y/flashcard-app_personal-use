@@ -7,21 +7,44 @@ export const useStore = create(
     persist(
         (set, get) => ({
             user: null,
+            users: [], // Store registered users: { id, username, password, avatar }
             decks: [],
             studyLog: [],
 
-            login: (email, password) => set({
-                user: {
-                    name: 'Felix',
-                    email: email,
-                    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'
+            signup: (username, password) => {
+                const state = get();
+                if (state.users.some(u => u.username === username)) {
+                    throw new Error('Username already exists');
                 }
-            }),
+                const newUser = {
+                    id: uuidv4(),
+                    username,
+                    password, // In a real app, hash this!
+                    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`
+                };
+                set({
+                    users: [...state.users, newUser],
+                    user: newUser
+                });
+            },
+
+            login: (username, password) => {
+                const state = get();
+                const user = state.users.find(u => u.username === username && u.password === password);
+                if (user) {
+                    set({ user });
+                } else {
+                    throw new Error('Invalid username or password');
+                }
+            },
+
             logout: () => set({ user: null }),
 
             addDeck: (name) => set((state) => {
+                if (!state.user) return state;
                 const newDeck = {
                     id: uuidv4(),
+                    ownerId: state.user.id,
                     name,
                     createdAt: new Date().toISOString(),
                     cards: [],
@@ -88,6 +111,16 @@ export const useStore = create(
 
                 // Update study log
                 const today = new Date().toISOString().split('T')[0];
+                // Filter logs for current user if needed, but for now global log is fine or we can add userId to log
+                // Ideally studyLog should also be filtered by user, but let's keep it simple for now or link it.
+                // Better: link study log to user.
+
+                // Let's make studyLog user-specific in the future or now?
+                // For now, let's just keep it simple. If we want per-user stats, we need to change studyLog structure.
+                // Let's assume studyLog is global for this device for now, or filter by user in Heatmap.
+                // To do it right: add userId to studyLog entries or separate logs.
+                // Given the scope, let's just stick to decks for now.
+
                 const logEntryIndex = state.studyLog.findIndex(l => l.date === today);
                 let newStudyLog = [...state.studyLog];
 
@@ -114,7 +147,14 @@ export const useStore = create(
         }),
         {
             name: 'flashcard-storage', // unique name
-            partialize: (state) => ({ decks: state.decks, studyLog: state.studyLog, user: state.user }), // persist these fields
+            partialize: (state) => ({
+                decks: state.decks,
+                studyLog: state.studyLog,
+                users: state.users, // Persist users
+                // Do NOT persist 'user' (current session) to force login on refresh? 
+                // Or persist it for convenience? Let's persist it for convenience.
+                user: state.user
+            }),
         }
     )
 );
