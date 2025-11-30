@@ -3,7 +3,7 @@ import { ToastProvider } from './context/ToastContext';
 import Layout from './components/Layout';
 import DeckList from './components/DeckList';
 import StudySession from './components/StudySession';
-import Heatmap from './components/Heatmap';
+
 import Stats from './components/Stats';
 import Login from './components/Login';
 import { useStore } from './hooks/useStore';
