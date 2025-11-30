@@ -19,9 +19,7 @@ function App() {
         }
     }, [user, fetchDecks]);
 
-    if (!user) {
-        return <Login />;
-    }
+
 
     const handleStudy = (deckId) => {
         setStudyDeckId(deckId);
