@@ -96,7 +96,11 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
 
     const handleAddCard = async (e) => {
         e.preventDefault();
-        if (front.trim() && back.trim()) {
+        // Allow if either text OR image is present for both sides
+        const hasFront = front.trim() || frontImage;
+        const hasBack = back.trim() || backImage;
+
+        if (hasFront && hasBack) {
             try {
                 await addCard(addingCardTo, front, back, frontImage, backImage);
                 addToast('Card added!', 'success');
@@ -108,6 +112,8 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
             } catch (err) {
                 addToast('Failed to add card', 'error');
             }
+        } else {
+            addToast('Both sides must have text or an image', 'error');
         }
     };
 
