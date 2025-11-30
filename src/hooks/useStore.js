@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { calculateNextReview } from '../utils/srs';
+
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -23,6 +23,7 @@ export const useStore = create(
                 if (!res.ok) throw new Error(data.msg || 'Signup failed');
                 set({ user: data.user, token: data.token });
                 get().fetchDecks();
+                get().fetchStudyLogs();
             },
 
             login: async (username, password) => {
@@ -35,6 +36,7 @@ export const useStore = create(
                 if (!res.ok) throw new Error(data.msg || 'Login failed');
                 set({ user: data.user, token: data.token });
                 get().fetchDecks();
+                get().fetchStudyLogs();
             },
 
             logout: () => set({ user: null, token: null, decks: [] }),
@@ -145,28 +147,47 @@ export const useStore = create(
                 console.warn("Delete card not implemented in backend yet");
             },
 
-            recordReview: (deckId, cardId, rating) => set((state) => {
-                const deck = state.decks.find(d => d.id === deckId);
-                if (!deck) return state;
+            fetchStudyLogs: async () => {
+                const { token } = get();
+                if (!token) return;
+                try {
+                    const res = await fetch(`${API_URL}/decks/stats/logs`, {
+                        headers: { 'x-auth-token': token }
+                    });
+                    const data = await res.json();
+                    if (res.ok) set({ studyLog: data });
+                } catch (err) {
+                    console.error('Failed to fetch study logs', err);
+                }
+            },
 
-                const card = deck.cards.find(c => c.id === cardId);
-                if (!card) return state;
+            recordReview: async (deckId, cardId, rating) => {
+                const { token } = get();
+                if (!token) return;
+                try {
+                    const res = await fetch(`${API_URL}/decks/${deckId}/cards/${cardId}/review`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': token
+                        },
+                        body: JSON.stringify({ rating })
+                    });
 
-                const srsResult = calculateNextReview(card, rating, deck.settings);
+                    const updatedDeck = await res.json();
 
-                return {
-                    decks: state.decks.map(d => {
-                        if (d.id !== deckId) return d;
-                        return {
-                            ...d,
-                            cards: d.cards.map(c => {
-                                if (c.id !== cardId) return c;
-                                return { ...c, srsData: { ...c.srsData, ...srsResult } };
-                            })
-                        };
-                    })
-                };
-            }),
+                    if (res.ok) {
+                        // Update deck in store
+                        set((state) => ({
+                            decks: state.decks.map(d => d.id === deckId ? updatedDeck : d)
+                        }));
+                        // Refresh logs to update heatmap
+                        get().fetchStudyLogs();
+                    }
+                } catch (err) {
+                    console.error('Failed to record review', err);
+                }
+            },
         }),
         {
             name: 'flashcard-storage',

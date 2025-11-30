@@ -1,6 +1,8 @@
 import express from 'express';
 import auth from '../middleware/auth.js';
 import Deck from '../models/Deck.js';
+import StudyLog from '../models/StudyLog.js';
+import { calculateNextReview } from '../utils/srs.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
@@ -102,6 +104,54 @@ router.put('/:id/settings', auth, async (req, res) => {
         deck.settings = { ...deck.settings, ...settings };
         await deck.save();
         res.json(deck);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+});
+
+// Record review
+router.post('/:id/cards/:cardId/review', auth, async (req, res) => {
+    const { rating } = req.body;
+    try {
+        const deck = await Deck.findOne({ id: req.params.id });
+        if (!deck) return res.status(404).json({ msg: 'Deck not found' });
+        if (deck.owner.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        const card = deck.cards.find(c => c.id === req.params.cardId);
+        if (!card) return res.status(404).json({ msg: 'Card not found' });
+
+        // Calculate next review
+        const srsResult = calculateNextReview(card, rating, deck.settings);
+
+        // Update card
+        card.srsData = { ...card.srsData, ...srsResult };
+
+        // Update deck
+        await deck.save();
+
+        // Update Study Log
+        const today = new Date().toISOString().split('T')[0];
+        await StudyLog.findOneAndUpdate(
+            { userId: req.user.id, date: today },
+            { $inc: { count: 1 } },
+            { upsert: true, new: true }
+        );
+
+        res.json(deck);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+});
+
+// Get study logs
+router.get('/stats/logs', auth, async (req, res) => {
+    try {
+        const logs = await StudyLog.find({ userId: req.user.id }).sort({ date: 1 });
+        res.json(logs);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error' });
