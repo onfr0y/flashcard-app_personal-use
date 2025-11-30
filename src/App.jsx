@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ToastProvider } from './context/ToastContext';
 import Layout from './components/Layout';
 import DeckList from './components/DeckList';
 import StudySession from './components/StudySession';
@@ -62,14 +63,16 @@ function App() {
     };
 
     return (
-        <div className="min-h-screen text-white selection:bg-white/20">
-            {!user && <Login />}
-            <div className={!user ? 'pointer-events-none' : ''}>
-                <Layout activeTab={activeTab} onTabChange={setActiveTab}>
-                    {renderContent()}
-                </Layout>
+        <ToastProvider>
+            <div className="min-h-screen text-white selection:bg-white/20">
+                {!user && <Login />}
+                <div className={!user ? 'pointer-events-none' : ''}>
+                    <Layout activeTab={activeTab} onTabChange={setActiveTab}>
+                        {renderContent()}
+                    </Layout>
+                </div>
             </div>
-        </div>
+        </ToastProvider>
     );
 }
 

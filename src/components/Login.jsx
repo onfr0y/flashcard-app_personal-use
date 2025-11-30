@@ -2,26 +2,33 @@ import React, { useState } from 'react';
 import { useStore } from '../hooks/useStore';
 import { User, Lock, ArrowRight, UserPlus } from 'lucide-react';
 
+import { useToast } from '../context/ToastContext';
+
 const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const { login, signup } = useStore();
+    const { addToast } = useToast();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setLoading(true);
 
         try {
             if (isLogin) {
                 await login(username, password);
+                addToast('Welcome back!', 'success');
             } else {
                 await signup(username, password);
+                addToast('Account created successfully!', 'success');
             }
         } catch (err) {
-            setError(err.message);
+            addToast(err.message, 'error');
+        } finally {
+            setLoading(false);
         }
     };
 

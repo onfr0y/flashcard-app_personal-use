@@ -5,8 +5,11 @@ import ScrollReveal from './ScrollReveal';
 import { motion, AnimatePresence } from 'framer-motion';
 import ScrambledText from './ScrambledText';
 
+import { useToast } from '../context/ToastContext';
+
 const DeckList = ({ onStudy, searchQuery = '' }) => {
-    const { decks, addDeck, deleteDeck, addCard, updateDeckSettings, user } = useStore();
+    const { decks, addDeck, deleteDeck, addCard, updateDeckSettings, user, isLoading } = useStore();
+    const { addToast } = useToast();
     const [isCreating, setIsCreating] = useState(false);
     const [newDeckName, setNewDeckName] = useState('');
 
@@ -27,12 +30,17 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
     const [frontImage, setFrontImage] = useState('');
     const [backImage, setBackImage] = useState('');
 
-    const handleCreateDeck = (e) => {
+    const handleCreateDeck = async (e) => {
         e.preventDefault();
         if (newDeckName.trim()) {
-            addDeck(newDeckName);
-            setNewDeckName('');
-            setIsCreating(false);
+            try {
+                await addDeck(newDeckName);
+                addToast('Deck created!', 'success');
+                setNewDeckName('');
+                setIsCreating(false);
+            } catch (err) {
+                addToast('Failed to create deck', 'error');
+            }
         }
     };
 
@@ -42,13 +50,18 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
         setTempSettings({ learningSteps: steps });
     };
 
-    const saveSettings = () => {
+    const saveSettings = async () => {
         if (editingSettingsDeckId) {
             const stepsArray = tempSettings.learningSteps.trim().split(/\s+/).map(Number).filter(n => !isNaN(n) && n > 0);
-            updateDeckSettings(editingSettingsDeckId, {
-                learningSteps: stepsArray.length > 0 ? stepsArray : [1, 10]
-            });
-            setEditingSettingsDeckId(null);
+            try {
+                await updateDeckSettings(editingSettingsDeckId, {
+                    learningSteps: stepsArray.length > 0 ? stepsArray : [1, 10]
+                });
+                addToast('Settings saved', 'success');
+                setEditingSettingsDeckId(null);
+            } catch (err) {
+                addToast('Failed to save settings', 'error');
+            }
         }
     };
 
@@ -69,15 +82,31 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
         }
     };
 
-    const handleAddCard = (e) => {
+    const handleAddCard = async (e) => {
         e.preventDefault();
         if (front.trim() && back.trim()) {
-            addCard(addingCardTo, front, back, frontImage, backImage);
-            setFront('');
-            setBack('');
-            setFrontImage('');
-            setBackImage('');
-            setAddingCardTo(null);
+            try {
+                await addCard(addingCardTo, front, back, frontImage, backImage);
+                addToast('Card added!', 'success');
+                setFront('');
+                setBack('');
+                setFrontImage('');
+                setBackImage('');
+                setAddingCardTo(null);
+            } catch (err) {
+                addToast('Failed to add card', 'error');
+            }
+        }
+    };
+
+    const handleDeleteDeck = async (id) => {
+        if (window.confirm('Are you sure you want to delete this deck?')) {
+            try {
+                await deleteDeck(id);
+                addToast('Deck deleted', 'info');
+            } catch (err) {
+                addToast('Failed to delete deck', 'error');
+            }
         }
     };
 
@@ -130,6 +159,20 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
                     </motion.div>
                 </ScrollReveal>
 
+                {/* Loading State */}
+                {isLoading && (
+                    <div className="col-span-full flex justify-center py-12">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+                    </div>
+                )}
+
+                {/* Empty State */}
+                {!isLoading && filteredDecks.length === 0 && (
+                    <div className="col-span-full text-center py-12 text-white/60">
+                        <p className="text-xl">No decks found. Create one to get started!</p>
+                    </div>
+                )}
+
                 {/* Existing Decks */}
                 <AnimatePresence>
                     {filteredDecks.map((deck, index) => (
@@ -156,7 +199,7 @@ const DeckList = ({ onStudy, searchQuery = '' }) => {
                                             <Settings className="w-5 h-5" />
                                         </button>
                                         <button
-                                            onClick={() => deleteDeck(deck.id)}
+                                            onClick={() => handleDeleteDeck(deck.id)}
                                             className="p-2 hover:bg-red-50 rounded-full text-gray-300 hover:text-red-500 transition-colors"
                                         >
                                             <Trash2 className="w-5 h-5" />

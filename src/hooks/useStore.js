@@ -10,7 +10,8 @@ export const useStore = create(
             user: null,
             token: null,
             decks: [],
-            studyLog: [], // Still local for now or we can fetch it if we add an endpoint
+            isLoading: false, // Add loading state
+            studyLog: [],
 
             signup: async (username, password) => {
                 const res = await fetch(`${API_URL}/auth/register`, {
@@ -41,6 +42,7 @@ export const useStore = create(
             fetchDecks: async () => {
                 const { token } = get();
                 if (!token) return;
+                set({ isLoading: true }); // Start loading
                 try {
                     const res = await fetch(`${API_URL}/decks`, {
                         headers: { 'x-auth-token': token }
@@ -49,6 +51,8 @@ export const useStore = create(
                     if (res.ok) set({ decks: data });
                 } catch (err) {
                     console.error('Failed to fetch decks', err);
+                } finally {
+                    set({ isLoading: false }); // Stop loading
                 }
             },
 
