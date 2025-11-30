@@ -4,7 +4,7 @@ import { Plus, Trash2, Play, Settings, X, Image as ImageIcon } from 'lucide-reac
 import ScrollReveal from './ScrollReveal';
 import { motion, AnimatePresence } from 'framer-motion';
 import ScrambledText from './ScrambledText';
-import ScrambledText from './ScrambledText';
+
 
 import { useToast } from '../context/ToastContext';
 
